@@ -1,0 +1,13 @@
+FROM golang:latest
+
+RUN go get -u github.com/lib/pq github.com/jinzhu/gorm
+
+RUN mkdir $GOPATH/src/model
+COPY app/src/model $GOPATH/src/model/
+WORKDIR $GOPATH/src/model
+RUN go build && go install
+
+COPY app/src/migrations/* /app
+WORKDIR /app
+RUN go build -o main .
+CMD ["/app/main"]
